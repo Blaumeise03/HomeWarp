@@ -12,7 +12,7 @@ public class HomeWarp extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Starting HomeWarp..");
+        getLogger().info("Starting HomeWarp...");
 
         getLogger().info("Initializing Commands...");
         commands.add(new de.blaumeise03.homeWarp.Command("home-help", "Ruft die Hilfe auf.") {
@@ -23,12 +23,19 @@ public class HomeWarp extends JavaPlugin {
                 for(de.blaumeise03.homeWarp.Command c : commands){
                     builder.append("§4").append(c.getLabel()).append("§4 : ").append(c.getHelp());
                 }
+                sender.sendMessage(builder.toString());
             }
         });
         commands.add(new de.blaumeise03.homeWarp.Command("setHome", "Setzte deinen Homepunkt!") {
             @Override
             public void onCommand(String[] args, CommandSender sender) {
-
+                sender.sendMessage("test");
+            }
+        });
+        commands.add(new de.blaumeise03.homeWarp.Command("home", "Teleportiert dich nach Hause.") {
+            @Override
+            public void onCommand(String[] args, CommandSender sender) {
+                sender.sendMessage("test2");
             }
         });
     }
@@ -45,6 +52,12 @@ public class HomeWarp extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return super.onCommand(sender, command, label, args);
+        for (de.blaumeise03.homeWarp.Command c : commands){
+            if(label.equalsIgnoreCase(c.getLabel())){
+                c.onCommand(args, sender);
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,3 +1,10 @@
 name: HomeWarp
 version: 1.0-Snapshot
 main: de.blaumeise03.homeWarp.HomeWarp
+commands:
+  home:
+    description: Teleportiert dich zu deinem geliebten Zuhause.
+  sethome:
+    description: Setzt dein Zuhause.
+  homeWarp-help:
+    description: Hilfe! Wo ist die Hilfe?
