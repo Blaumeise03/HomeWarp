@@ -12,7 +12,7 @@ public class HomeWarp extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Starting HomeWarp...");
+        getLogger().info("Starting HomeWarp..");
 
         getLogger().info("Initializing Commands...");
         commands.add(new de.blaumeise03.homeWarp.Command("home-help", "Ruft die Hilfe auf.") {
