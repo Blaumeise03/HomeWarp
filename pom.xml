@@ -6,7 +6,7 @@
 
     <groupId>de.blaumeise03</groupId>
     <artifactId>HomeWarp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <build>
         <plugins>

@@ -2,6 +2,7 @@ package de.blaumeise03.homeWarp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -16,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class HomeWarp extends JavaPlugin {
 
@@ -29,6 +32,7 @@ public class HomeWarp extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("Starting HomeWarp...");
+        getLogger().info("HomeWarp by Blaumeise03");
         plugin = this;
 
 
@@ -39,7 +43,7 @@ public class HomeWarp extends JavaPlugin {
                 StringBuilder builder = new StringBuilder();
                 builder.append("§6HomeWarp Hilfe:\n");
                 for(de.blaumeise03.homeWarp.Command c : commands){
-                    builder.append("§4").append(c.getLabel()).append("§4 : ").append(c.getHelp());
+                    builder.append("§6").append(c.getLabel()).append("§a : ").append(c.getHelp()).append("\n");
                 }
                 sender.sendMessage(builder.toString());
             }
@@ -54,7 +58,7 @@ public class HomeWarp extends JavaPlugin {
                     configuration.set("Warps." + ((Player) sender).getUniqueId() + ".z", loc.getZ());
                     configuration.set("Warps." + ((Player) sender).getUniqueId() + ".yaw", loc.getYaw());
                     configuration.set("Warps." + ((Player) sender).getUniqueId() + ".pitch", loc.getPitch());
-                    configuration.set("Warps." + ((Player) sender).getUniqueId() + ".world", loc.getWorld());
+                    configuration.set("Warps." + ((Player) sender).getUniqueId() + ".world", loc.getWorld().getUID().toString());
                     sender.sendMessage("§aHomepunkt gesetzt!");
                 }else sender.sendMessage("Error! Executor must be a Player!");
             }
@@ -70,8 +74,11 @@ public class HomeWarp extends JavaPlugin {
                     float pitch = (float) configuration.getDouble("Warps." + ((Player) sender).getUniqueId() + ".pitch");
                     String worldUUID = configuration.getString("Warps." + ((Player) sender).getUniqueId() + ".world");
 
-                    assert worldUUID != null;
-                    ((Player) sender).teleport(new Location(Bukkit.getWorld(worldUUID),x, y, z, yaw ,pitch));
+                    World world = Bukkit.getWorld(UUID.fromString(worldUUID));
+                    //getLogger().info(world.getName());
+                    Location warp = new Location(world,x, y, z, yaw ,pitch);
+                    //Objects.requireNonNull(warp.getWorld()).loadChunk(warp.getChunk());
+                    ((Player) sender).teleport(warp);
                     sender.sendMessage("§aDu wurdest zu deinem Home teleportiert!");
                 }else sender.sendMessage("Error! Executor must be a Player!");
             }
@@ -112,7 +119,12 @@ public class HomeWarp extends JavaPlugin {
     private void createConfigs(){
         confF = new File(getDataFolder(), "config.yml");
         if(!confF.exists()){
-            confF.mkdirs();
+            confF.getParentFile().mkdirs();
+            try {
+                confF.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             saveResource("config.yml", false);
         }
         configuration = new YamlConfiguration();

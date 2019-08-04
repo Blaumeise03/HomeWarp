@@ -1,5 +1,5 @@
 name: HomeWarp
-version: 1.0-Snapshot
+version: 1.0
 main: de.blaumeise03.homeWarp.HomeWarp
 commands:
   home:
