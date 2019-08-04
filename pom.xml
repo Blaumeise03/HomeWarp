@@ -37,6 +37,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies-->
+    <!-->Library: Spigot 1.14.4<-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
