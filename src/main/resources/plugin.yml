@@ -6,5 +6,5 @@ commands:
     description: Teleportiert dich zu deinem geliebten Zuhause.
   sethome:
     description: Setzt dein Zuhause.
-  homeWarp-help:
+  home-help:
     description: Hilfe! Wo ist die Hilfe?
