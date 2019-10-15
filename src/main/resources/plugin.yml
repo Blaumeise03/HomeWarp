@@ -1,6 +1,11 @@
 name: HomeWarp
 version: 1.0
 main: de.blaumeise03.homeWarp.HomeWarp
+description: A home teleportation plugin
+api-version: 1.13
+author: Blaumeise03
+website: http://blaumeise03.de/
+
 commands:
   home:
     description: Teleportiert dich zu deinem geliebten Zuhause.

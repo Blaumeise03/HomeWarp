@@ -28,17 +28,20 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class HomeWarp extends JavaPlugin {
 
     private static List<de.blaumeise03.homeWarp.Command> commands = new ArrayList<>();
+
+    public static Map<Player, Long> damage = new HashMap<>();
+    public static Map<Player, Boolean> teleport = new HashMap<>();
 
     public static Plugin plugin;
 
@@ -50,7 +53,8 @@ public class HomeWarp extends JavaPlugin {
         getLogger().info("Starting HomeWarp...");
         getLogger().info("HomeWarp by Blaumeise03");
         plugin = this;
-
+        damage = new HashMap<>();
+        teleport = new HashMap<>();
 
         getLogger().info("Initializing Commands...");
         commands.add(new de.blaumeise03.homeWarp.Command("home-help", "Ruft die Hilfe auf.") {
@@ -94,14 +98,55 @@ public class HomeWarp extends JavaPlugin {
                     //getLogger().info(world.getName());
                     Location warp = new Location(world,x, y, z, yaw ,pitch);
                     //Objects.requireNonNull(warp.getWorld()).loadChunk(warp.getChunk());
+                    if (damage.containsKey(sender))
+                        if ((System.currentTimeMillis() - damage.get(sender) < 60000)) {
+
+                            sender.sendMessage("§4Du musst §64 Sekunden §4warten! Beweg dich nicht!");
+                            teleport.put((Player) sender, true);
+                            new BukkitRunnable() {
+                                int i = 4;
+
+                                @Override
+                                public void run() {
+                                    i--;
+                                    if (i < 0) {
+                                        cancel();
+                                        return;
+                                    }
+                                    if (!teleport.get(sender)) {
+                                        sender.sendMessage("§4Du hast dich §6bewegt §4oder §6Schaden §4bekommen! Teleport abgebrochen!");
+                                        teleport.remove(sender);
+                                        cancel();
+                                        return;
+                                    }
+                                    if (i == 0) {
+                                        ((Player) sender).teleport(warp);
+                                        sender.sendMessage("§aDu wurdest zu deinem Home teleportiert!");
+                                        teleport.remove(sender);
+                                        getLogger().info("Spieler " + sender.getName() + " hat sich zu seinem Zuhause teleportiert!");
+                                        cancel();
+                                        return;
+                                    }
+                                    sender.sendMessage("§aDu wirst in §4" + i + " §6" + (i == 1 ? "Sekunde" : "Sekunden") + "§a teleportiert!");
+                                }
+                            }.runTaskTimer(HomeWarp.plugin, 20, 20);
+                            return;
+                        }
+
                     ((Player) sender).teleport(warp);
                     sender.sendMessage("§aDu wurdest zu deinem Home teleportiert!");
+                    getLogger().info("Spieler " + sender.getName() + " hat sich zu seinem Zuhause teleportiert!");
+
+
                 }else sender.sendMessage("Error! Executor must be a Player!");
             }
         });
 
         getLogger().info("Setting up Configs...");
         createConfigs();
+        getLogger().info("Registering Listeners...");
+        PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new Listeners(), this);
 
         getLogger().info("Enabled!");
     }
