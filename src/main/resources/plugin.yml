@@ -9,7 +9,19 @@ website: http://blaumeise03.de/
 commands:
   home:
     description: Teleportiert dich zu deinem geliebten Zuhause.
+    permission: home.home
   sethome:
     description: Setzt dein Zuhause.
+    permission: home.home
   home-help:
     description: Hilfe! Wo ist die Hilfe?
+    permission: home.home
+permissions:
+  home.home:
+    description: Permission for the /home, /home-help and /sethome commands.
+    default: true
+  home.*:
+    description: Wildcard permission
+    default: op
+    children:
+      home.home: true
